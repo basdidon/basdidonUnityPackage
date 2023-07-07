@@ -1,3 +1,14 @@
 {
-	"name": "BasDidon"
+    "name": "BasDidon",
+    "rootNamespace": "BasDidon",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
