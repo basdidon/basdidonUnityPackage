@@ -1,0 +1,22 @@
+{
+  "name": "basdidonunitypackage",
+  "version": "1.0.0",
+  "description": "my own utility classes for Unity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/basdidon/basdidonUnityPackage.git"
+  },
+  "keywords": [
+    "[]"
+  ],
+  "author": "basdidon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/basdidon/basdidonUnityPackage/issues"
+  },
+  "homepage": "https://github.com/basdidon/basdidonUnityPackage#readme"
+}
