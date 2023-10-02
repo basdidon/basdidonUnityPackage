@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BasDidon
+namespace BasDidon.PathFinder
 {
     // using A*
     public class GridPathFinder
