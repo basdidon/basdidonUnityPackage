@@ -48,7 +48,6 @@ namespace BasDidon.PathFinder2D
             var toSearch = new List<Node> { startNode };
             var processed = new List<Node>();
 
-
             while (toSearch.Count > 0)
             {
                 Node currentNode = toSearch[0]; //default currentNode

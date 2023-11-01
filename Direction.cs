@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BasDidon
@@ -41,6 +42,86 @@ namespace BasDidon
                 Debug.LogWarning($"{directionVector} not in meet any criteria");
                 return Directions.None;
             }
+        }
+
+        public static Vector3Int DirectionToVector3Int(Directions direction)
+        {
+            if ((direction & Directions.Left) != 0)
+            {
+                return Vector3Int.left;
+            }
+
+            if ((direction & Directions.Right) != 0)
+            {
+                return Vector3Int.right;
+            }
+
+            if ((direction & Directions.Up) != 0)
+            {
+                return Vector3Int.up;
+            }
+
+            if ((direction & Directions.Down) != 0)
+            {
+                return Vector3Int.down;
+            }
+
+            return Vector3Int.zero;
+        }
+
+
+        public static List<Vector3Int> DirectionsToVector3Ints(Directions directions)
+        {
+            List<Vector3Int> vecs = new();
+            
+            if ((directions & Directions.Left) != 0)
+            {
+                vecs.Add(Vector3Int.left);
+            }
+
+            if((directions&Directions.Right)!= 0)
+            {
+                vecs.Add(Vector3Int.right);
+            }
+
+            if ((directions & Directions.Up) != 0)
+            {
+                vecs.Add(Vector3Int.up);
+            }
+
+            if ((directions & Directions.Down) != 0)
+            {
+                vecs.Add(Vector3Int.down);
+            }
+
+            return vecs;
+        }
+
+        public static List<Directions> Extract(Directions directions)
+        {
+            List<Directions> extracted = new();
+
+            if ((directions & Directions.Left) != 0)
+            {
+                extracted.Add(Directions.Left);
+            }
+
+            if ((directions & Directions.Right) != 0)
+            {
+                extracted.Add(Directions.Right);
+            }
+
+            if ((directions & Directions.Up) != 0)
+            {
+                extracted.Add(Directions.Up);
+            }
+
+            if ((directions & Directions.Down) != 0)
+            {
+                extracted.Add(Directions.Down);
+            }
+
+            return extracted;
         }
 
         public static bool IsCellInDirection(Vector3Int pivot, Vector3Int cell, Directions dirs)
