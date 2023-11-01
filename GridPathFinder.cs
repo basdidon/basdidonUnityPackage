@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,9 +45,19 @@ namespace BasDidon.PathFinder
         /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
         public static bool TryFindPath(IMoveable moveableObject, Vector3Int startCell, Vector3Int targetCell, List<Vector3Int> dirs, out List<Vector3Int> resultPath)
         {
+            return TryFindPath(moveableObject.CanMoveTo, startCell, targetCell, dirs, out resultPath);
+        }
+
+        /// <param name="predicate"></param>
+        /// <param name="startCell"></param>
+        /// <param name="targetCell"></param>
+        /// <param name="dirs">list of direction that can move</param>
+        /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
+        public static bool TryFindPath(Func<Vector3Int,bool> predicate, Vector3Int startCell, Vector3Int targetCell, List<Vector3Int> dirs, out List<Vector3Int> resultPath)
+        {
             resultPath = new();
 
-            if (!moveableObject.CanMoveTo(targetCell))
+            if (!predicate(targetCell))
             {
                 Debug.Log("target can't reach");
                 return false;
@@ -74,7 +85,7 @@ namespace BasDidon.PathFinder
                 foreach (var direction in dirs)
                 {
                     var nextPos = currentNode.CellPosition + direction;
-                    if (moveableObject.CanMoveTo(nextPos))
+                    if (predicate(nextPos))
                     {
                         var newPath = new List<Vector3Int>(currentNode.Path) { nextPos };
 
