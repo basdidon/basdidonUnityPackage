@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Linq;
 namespace BasDidon.PathFinder
 {
     using static BasDidon.Direction;
-
     // using A*
     public class GridPathFinder
     {
@@ -15,7 +13,7 @@ namespace BasDidon.PathFinder
         {
             public Vector3Int CellPos { get; }
             public bool CanMoveTo(Vector3Int cellPos);
-            public Vector3Int TryMove(Vector3Int from, Directions direction);
+            public bool TryMove(Vector3Int from, Directions direction,out Vector3Int moveResult);
         }
 
         public class PathTraced : List<Vector3Int>
@@ -184,9 +182,9 @@ namespace BasDidon.PathFinder
 
                 foreach (var dir in extractedDir)
                 {
-                    if (moveableObject.CanMoveTo(_cur.ResultCell + DirectionToVector3Int(dir)))
+                    if (moveableObject.TryMove(_cur.ResultCell,dir,out Vector3Int moveResult))
                     {
-                        toSearch.Add(new(moveableObject.TryMove(_cur.ResultCell, dir), _cur.Directions.Append(dir)));
+                        toSearch.Add(new(moveResult, _cur.Directions.Append(dir)));
                     }
                 }
 
