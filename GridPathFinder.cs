@@ -15,7 +15,7 @@ namespace BasDidon.PathFinder
         {
             public Vector3Int CellPos { get; }
             public bool CanMoveTo(Vector3Int cellPos);
-            public Vector3Int TryMove(Vector3Int from, Direction direction);
+            public Vector3Int TryMove(Vector3Int from, Directions direction);
         }
 
         public class PathTraced : List<Vector3Int>
@@ -163,35 +163,52 @@ namespace BasDidon.PathFinder
             return false;
         }
 
-        public static void TryMove(IMoveable moveableObject,int moveCount, out List<DirectionsToCell> directionsToCellList, Directions directions = Directions.Cardinal)
+        public static List<DirectionsToCell> PredictMoves(IMoveable moveableObject,int moveCount,Directions directions = Directions.Cardinal)
         {
-            directionsToCellList = new();
-            
             if (moveCount < 0)
-                return;
+                return null;
 
             List<DirectionsToCell> toSearch = new();
             List<DirectionsToCell> processed = new();
             var extractedDir = Extract(directions);
 
-            foreach(var dir in extractedDir)
+            toSearch.Add(new(moveableObject.CellPos, new List<Directions>()));
+
+            while(toSearch.Count > 0)
             {
-                moveableObject.CanMoveTo(moveableObject.CellPos + DirectionToVector3Int(dir));
+                var _cur = toSearch[0];
+                toSearch.RemoveAt(0);
+
+                if (_cur.MoveUsed >= moveCount)
+                    continue;
+
+                foreach (var dir in extractedDir)
+                {
+                    if (moveableObject.CanMoveTo(_cur.ResultCell + DirectionToVector3Int(dir)))
+                    {
+                        toSearch.Add(new(moveableObject.TryMove(_cur.ResultCell, dir), _cur.Directions.Append(dir)));
+                    }
+                }
+
+                processed.Add(_cur);
             }
-            
+
+            return processed;
+
         }
     }
 
     public struct DirectionsToCell
     {
         public Vector3Int ResultCell { get; }
-        Directions[] directions;
+        List<Directions> directions;
         public IReadOnlyList<Directions> Directions => directions;
+        public int MoveUsed => Directions.Count;
 
-        public DirectionsToCell(Vector3Int resultCell,Directions[] dirCollection)
+        public DirectionsToCell(Vector3Int resultCell,IEnumerable<Directions> dirCollection)
         {
             ResultCell = resultCell;
-            directions = dirCollection;
+            directions = dirCollection.ToList();
         }
     }
 }
