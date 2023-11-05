@@ -170,20 +170,14 @@ namespace BasDidon.PathFinder
             List<DirectionsToCell> processed = new();
             var extractedDir = Extract(directions);
 
-            foreach (var dir in extractedDir)
-            {
-                if (moveableObject.TryMove(moveableObject.CellPos, dir, out Vector3Int moveResult))
-                {
-                    toSearch.Add(new(moveResult, new List<Directions>() { dir }));
-                }
-            }
+            toSearch.Add(new(moveableObject.CellPos, new List<Directions>()));
 
             while(toSearch.Count > 0)
             {
                 var _cur = toSearch[0];
                 toSearch.RemoveAt(0);
 
-                if (_cur.MoveUsed >= moveCount)
+                if (_cur.MoveUsed > moveCount)
                     continue;
 
                 foreach (var dir in extractedDir)
