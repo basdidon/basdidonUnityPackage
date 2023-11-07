@@ -5,8 +5,19 @@ using System.Linq;
 
 namespace BasDidon.PathFinder
 {
-    using BasDidon.Direction;
+    using Direction;
     // using A*
+
+    public interface IBoardObject
+    {
+        Vector3Int CellPos { get; }
+    }
+
+    public interface IMoveable : IBoardObject
+    {
+        public bool CanMoveTo(Vector3Int cellPos);
+    }
+
 
     public class PathTraced : List<Vector3Int>
     {
@@ -42,13 +53,6 @@ namespace BasDidon.PathFinder
         }
     }
 
-    public interface IMoveable
-    {
-        public Vector3Int CellPos { get; }
-        //public bool CanMoveTo(Vector3Int cellPos);
-        public bool TryMove(Vector3Int from, Directions direction, out Vector3Int moveResult);
-    }
-
     public struct DirectionsToCell
     {
         public Vector3Int ResultCell { get; }
@@ -62,7 +66,7 @@ namespace BasDidon.PathFinder
         }
     }
 
-    public class GridPathFinder
+    public static class GridPathFinder
     {
         struct AStarNode
         {
@@ -103,13 +107,7 @@ namespace BasDidon.PathFinder
         /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
         public static bool TryFindPath(IMoveable moveableObject, Vector3Int startCell, Vector3Int targetCell, Directions dirs, out PathTraced resultPath)
         {
-            return TryFindPath(
-                (nextPos)=>moveableObject.TryMove(moveableObject.CellPos, Direction.Vector3IntToDirection(nextPos-moveableObject.CellPos),out Vector3Int _), 
-                startCell, 
-                targetCell, 
-                dirs,
-                out resultPath
-            );
+            return TryFindPath(moveableObject.CanMoveTo, startCell, targetCell, dirs, out resultPath);
         }
 
         /// <param name="predicate"></param>
@@ -178,46 +176,6 @@ namespace BasDidon.PathFinder
 
             Debug.Log($"not found : ({processed.Count}) processed node");
             return false;
-        }
-
-        public static List<DirectionsToCell> PredictMoves(IMoveable moveableObject,int moveCount,Directions directions = Directions.Cardinal)
-        {
-            if (moveCount < 0)
-                return null;
-
-            List<DirectionsToCell> toSearch = new();
-            List<DirectionsToCell> processed = new();
-            var extractedDir = Direction.Extract(directions);
-
-            foreach (var dir in extractedDir)
-            {
-                if (moveableObject.TryMove(moveableObject.CellPos, dir, out Vector3Int moveResult))
-                {
-                    toSearch.Add(new(moveResult, new List<Directions>() { dir }));
-                }
-            }
-
-            while(toSearch.Count > 0)
-            {
-                var _cur = toSearch[0];
-                toSearch.RemoveAt(0);
-
-                if (_cur.MoveUsed > moveCount)
-                    continue;
-
-                foreach (var dir in extractedDir)
-                {
-                    if (moveableObject.TryMove(_cur.ResultCell,dir,out Vector3Int moveResult))
-                    {
-                        toSearch.Add(new(moveResult, _cur.Directions.Append(dir)));
-                    }
-                }
-
-                processed.Add(_cur);
-            }
-
-            return processed;
-
         }
     }
 }
