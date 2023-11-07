@@ -7,49 +7,71 @@ namespace BasDidon.PathFinder
 {
     using BasDidon.Direction;
     // using A*
+
+    public class PathTraced : List<Vector3Int>
+    {
+        public PathTraced() { }
+        public PathTraced(IEnumerable<Vector3Int> collection)
+        {
+            AddRange(collection);
+        }
+
+        public List<Vector3Int> ToWayPoint()
+        {
+            List<Vector3Int> WayPoints = new();
+            Directions currentDir = Directions.None;
+
+            WayPoints.Add(this[0]);
+
+            for (int i = 0; i < Count - 1; i++)
+            {
+                var newDir = Direction.Vector3IntToDirection(this[i + 1] - this[i]);
+
+                Debug.Log($"{newDir}:{currentDir}");
+                if (newDir == currentDir)
+                {
+                    WayPoints[^1] = this[i + 1];
+                }
+                else
+                {
+                    WayPoints.Add(this[i + 1]);
+                    currentDir = newDir;
+                }
+            }
+
+            Debug.Log("-------------------------");
+            foreach (var wayPoint in WayPoints)
+            {
+                Debug.Log(wayPoint);
+            }
+            Debug.Log("-------------------------");
+
+            return WayPoints;
+        }
+    }
+
+    public interface IMoveable
+    {
+        public Vector3Int CellPos { get; }
+        public bool CanMoveTo(Vector3Int cellPos);
+        public bool TryMove(Vector3Int from, Directions direction, out Vector3Int moveResult);
+    }
+
+    public struct DirectionsToCell
+    {
+        public Vector3Int ResultCell { get; }
+        public IReadOnlyList<Directions> Directions { get; }
+        public int MoveUsed => Directions.Count;
+
+        public DirectionsToCell(Vector3Int resultCell, IEnumerable<Directions> dirCollection)
+        {
+            ResultCell = resultCell;
+            Directions = dirCollection.ToList();
+        }
+    }
+
     public class GridPathFinder
     {
-        public interface IMoveable
-        {
-            public Vector3Int CellPos { get; }
-            public bool CanMoveTo(Vector3Int cellPos);
-            public bool TryMove(Vector3Int from, Directions direction,out Vector3Int moveResult);
-        }
-
-        public class PathTraced : List<Vector3Int>
-        {
-            public PathTraced(){}
-            public PathTraced(IEnumerable<Vector3Int> collection)
-            {
-                AddRange(collection);
-            }
-
-            public List<Vector3Int> ToWayPoint()
-            {
-                List<Vector3Int> WayPoints = new();
-                Directions currentDir = Directions.None;
-
-                WayPoints.Add(this[0]);
-
-                for (int i = 0; i < Count - 1; i++)
-                {
-                    var newDir = Direction.Vector3IntToDirection(this[i + 1] - this[i]);
-
-                    if (newDir == currentDir)
-                    {
-                        WayPoints[^1] = this[i + 1];
-                    }
-                    else
-                    {
-                        WayPoints.Add(this[i + 1]);
-                        currentDir = newDir;
-                    }
-                }
-
-                return WayPoints;
-            }
-        }
-
         struct AStarNode
         {
             public Vector3Int CellPosition => Path.Last();
@@ -199,19 +221,6 @@ namespace BasDidon.PathFinder
 
             return processed;
 
-        }
-    }
-
-    public struct DirectionsToCell
-    {
-        public Vector3Int ResultCell { get; }
-        public IReadOnlyList<Directions> Directions { get; }
-        public int MoveUsed => Directions.Count;
-
-        public DirectionsToCell(Vector3Int resultCell,IEnumerable<Directions> dirCollection)
-        {
-            ResultCell = resultCell;
-            Directions = dirCollection.ToList();
         }
     }
 }
