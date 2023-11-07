@@ -45,7 +45,7 @@ namespace BasDidon.PathFinder
     public interface IMoveable
     {
         public Vector3Int CellPos { get; }
-        public bool CanMoveTo(Vector3Int cellPos);
+        //public bool CanMoveTo(Vector3Int cellPos);
         public bool TryMove(Vector3Int from, Directions direction, out Vector3Int moveResult);
     }
 
@@ -103,7 +103,13 @@ namespace BasDidon.PathFinder
         /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
         public static bool TryFindPath(IMoveable moveableObject, Vector3Int startCell, Vector3Int targetCell, Directions dirs, out PathTraced resultPath)
         {
-            return TryFindPath(moveableObject.CanMoveTo, startCell, targetCell, dirs, out resultPath);
+            return TryFindPath(
+                (nextPos)=>moveableObject.TryMove(moveableObject.CellPos, Direction.Vector3IntToDirection(nextPos-moveableObject.CellPos),out Vector3Int _), 
+                startCell, 
+                targetCell, 
+                dirs,
+                out resultPath
+            );
         }
 
         /// <param name="predicate"></param>
