@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BasDidon
+namespace BasDidon.Direction
 {
+    [Flags]
+    public enum Directions
+    {
+        None = 0,
+        Left = 1,
+        Right = 2,
+        Up = 4,
+        Down = 8,
+        Cardinal = 15, // Left,Right,Up,Down 
+    };
+
     public static class Direction
     {
-        [Flags]
-        public enum Directions
-        {
-            None = 0,
-            Left = 1,
-            Right = 2,
-            Up = 4,
-            Down = 8,
-            Cardinal = 15, // Left,Right,Up,Down 
-        };
-
         public static Vector3Int[] CardinalVector => new Vector3Int[] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
 
         public static Directions Vector3IntToDirection(Vector3Int directionVector)

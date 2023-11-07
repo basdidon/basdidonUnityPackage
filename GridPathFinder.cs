@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace BasDidon.PathFinder
 {
-    using static BasDidon.Direction;
+    using BasDidon.Direction;
     // using A*
     public class GridPathFinder
     {
@@ -33,7 +33,7 @@ namespace BasDidon.PathFinder
 
                 for (int i = 0; i < Count - 1; i++)
                 {
-                    var newDir = Vector3IntToDirection(this[i + 1] - this[i]);
+                    var newDir = Direction.Vector3IntToDirection(this[i + 1] - this[i]);
 
                     if (newDir == currentDir)
                     {
@@ -127,7 +127,7 @@ namespace BasDidon.PathFinder
                 processed.Add(currentNode);
                 toSearch.Remove(currentNode);
 
-                foreach (var direction in DirectionsToVector3Ints(dirs))
+                foreach (var direction in Direction.DirectionsToVector3Ints(dirs))
                 {
                     var nextPos = currentNode.CellPosition + direction;
                     if (predicate(nextPos))
@@ -168,7 +168,7 @@ namespace BasDidon.PathFinder
 
             List<DirectionsToCell> toSearch = new();
             List<DirectionsToCell> processed = new();
-            var extractedDir = Extract(directions);
+            var extractedDir = Direction.Extract(directions);
 
             foreach (var dir in extractedDir)
             {
