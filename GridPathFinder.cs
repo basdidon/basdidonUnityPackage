@@ -30,7 +30,7 @@ namespace BasDidon.PathFinder
         public List<Vector3Int> ToWayPoint()
         {
             List<Vector3Int> WayPoints = new();
-            Directions currentDir = Directions.None;
+            DirectionGroup currentDir = DirectionGroup.None;
 
             WayPoints.Add(this[0]);
 
@@ -56,10 +56,10 @@ namespace BasDidon.PathFinder
     public struct DirectionsToCell
     {
         public Vector3Int ResultCell { get; }
-        public IReadOnlyList<Directions> Directions { get; }
+        public IReadOnlyList<DirectionGroup> Directions { get; }
         public int MoveUsed => Directions.Count;
 
-        public DirectionsToCell(Vector3Int resultCell, IEnumerable<Directions> dirCollection)
+        public DirectionsToCell(Vector3Int resultCell, IEnumerable<DirectionGroup> dirCollection)
         {
             ResultCell = resultCell;
             Directions = dirCollection.ToList();
@@ -105,7 +105,7 @@ namespace BasDidon.PathFinder
         /// <param name="targetCell"></param>
         /// <param name="dirs">list of direction that can move</param>
         /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
-        public static bool TryFindPath(IMoveable moveableObject, Vector3Int startCell, Vector3Int targetCell, Directions dirs, out PathTraced resultPath)
+        public static bool TryFindPath(IMoveable moveableObject, Vector3Int startCell, Vector3Int targetCell, DirectionGroup dirs, out PathTraced resultPath)
         {
             return TryFindPath(moveableObject.CanMoveTo, startCell, targetCell, dirs, out resultPath);
         }
@@ -115,7 +115,7 @@ namespace BasDidon.PathFinder
         /// <param name="targetCell"></param>
         /// <param name="dirs">list of direction that can move</param>
         /// <param name="resultPath">list of every cell from <paramref name="startCell"/> to <paramref name="targetCell"/> </param>
-        public static bool TryFindPath(Func<Vector3Int,bool> predicate, Vector3Int startCell, Vector3Int targetCell, Directions dirs, out PathTraced resultPath)
+        public static bool TryFindPath(Func<Vector3Int,bool> predicate, Vector3Int startCell, Vector3Int targetCell, DirectionGroup dirs, out PathTraced resultPath)
         {
             resultPath = new();
 
