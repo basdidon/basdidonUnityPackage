@@ -27,7 +27,6 @@ namespace BasDidon.PathFinder
             {
                 var newDir = Direction.Vector3IntToDirection(this[i + 1] - this[i]);
 
-                Debug.Log($"{newDir}:{currentDir}");
                 if (newDir == currentDir)
                 {
                     WayPoints[^1] = this[i + 1];
@@ -38,13 +37,6 @@ namespace BasDidon.PathFinder
                     currentDir = newDir;
                 }
             }
-
-            Debug.Log("-------------------------");
-            foreach (var wayPoint in WayPoints)
-            {
-                Debug.Log(wayPoint);
-            }
-            Debug.Log("-------------------------");
 
             return WayPoints;
         }
@@ -90,10 +82,9 @@ namespace BasDidon.PathFinder
                 H = Mathf.Abs(cellPosition.x - targetCell.x) + Mathf.Abs(cellPosition.y - targetCell.y);
             }
 
-            public AStarNode(Vector3Int cellPosition, int g, Vector3Int targetCell, PathTraced _path)
+            public AStarNode(Vector3Int cellPosition, int g, Vector3Int targetCell, PathTraced newPath)
             {
-                path = _path;
-                path.Add(cellPosition);
+                path = newPath;
                 G = g;
                 H = Mathf.Abs(cellPosition.x - targetCell.x) + Mathf.Abs(cellPosition.y - targetCell.y);
             }
@@ -173,7 +164,7 @@ namespace BasDidon.PathFinder
                             }
 
                             // add new node
-                            toSearch.Add(new AStarNode(currentNode.CellPosition + direction, currentNode.G + 1, targetCell, newPath));
+                            toSearch.Add(new AStarNode(nextPos, currentNode.G + 1, targetCell, newPath));
                         }
                     }
                 }
