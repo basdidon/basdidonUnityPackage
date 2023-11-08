@@ -32,7 +32,7 @@ namespace BasDidon.Direction
         public static bool IsDirectionInGroup(Direction direction,DirectionGroup group)
         {
             // if direction == Direction.None return false
-            if(((byte)direction & (byte)group) == 0)
+            if(((byte)direction & (byte)group) != 0)
             {
                 return true;
             }
