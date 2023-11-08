@@ -42,22 +42,33 @@ namespace BasDidon.Direction
         // Convertor
         public static Direction Vector3IntToDirection(Vector3Int directionVector)
         {
-            if (directionVector == Vector3Int.left)
+            if (directionVector == Vector3Int.zero)
+                return Direction.None;
+
+            if (directionVector.x * directionVector.y != 0)
+            {
+                return Direction.None;
+            }
+
+            if(directionVector.x < 0)
             {
                 return Direction.Left;
             }
-            else if (directionVector == Vector3Int.right)
+            else if (directionVector.x > 0)
             {
                 return Direction.Right;
             }
-            else if (directionVector == Vector3Int.up)
-            {
-                return Direction.Up;
-            }
-            else //(directionVector == Vector3Int.down)
+            else if(directionVector.y < 0)
             {
                 return Direction.Down;
             }
+            else if (directionVector.y > 0)
+            {
+                return Direction.Up;
+            }
+
+            return Direction.None;
+            
         }
 
         public static Vector3Int DirectionToVector3Int(Direction direction)
