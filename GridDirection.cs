@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace BasDidon.Direction
 {
-    public enum Directions
+    public enum Direction
     {
-        None,
-        Left,
-        Right,
-        Up,
-        Down
+        None = 0,
+        Left = 1,
+        Right = 2,
+        Up = 4,
+        Down = 8
     }
 
     [Flags]
@@ -24,48 +24,57 @@ namespace BasDidon.Direction
         Cardinal = 15, // Left,Right,Up,Down 
     };
     
-    public static class Direction
+    public static class GridDirection
     {
         public static Vector3Int[] CardinalVector => new Vector3Int[] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
         
         // Comparer
+        public static bool IsDirectionInGroup(Direction direction,DirectionGroup group)
+        {
+            // if direction == Direction.None return false
+            if(((byte)direction & (byte)group) == 0)
+            {
+                return true;
+            }
+            return false;
+        }
 
         // Convertor
-        public static Directions Vector3IntToDirection(Vector3Int directionVector)
+        public static Direction Vector3IntToDirection(Vector3Int directionVector)
         {
             if (directionVector == Vector3Int.left)
             {
-                return Directions.Left;
+                return Direction.Left;
             }
             else if (directionVector == Vector3Int.right)
             {
-                return Directions.Right;
+                return Direction.Right;
             }
             else if (directionVector == Vector3Int.up)
             {
-                return Directions.Up;
+                return Direction.Up;
             }
             else //(directionVector == Vector3Int.down)
             {
-                return Directions.Down;
+                return Direction.Down;
             }
         }
 
-        public static Vector3Int DirectionToVector3Int(Directions direction)
+        public static Vector3Int DirectionToVector3Int(Direction direction)
         {
-            if ((direction & Directions.Left) != 0)
+            if ((direction & Direction.Left) != 0)
             {
                 return Vector3Int.left;
             }
-            else if ((direction & Directions.Right) != 0)
+            else if ((direction & Direction.Right) != 0)
             {
                 return Vector3Int.right;
             }
-            else if ((direction & Directions.Up) != 0)
+            else if ((direction & Direction.Up) != 0)
             {
                 return Vector3Int.up;
             }
-            else if ((direction & Directions.Down) != 0)
+            else if ((direction & Direction.Down) != 0)
             {
                 return Vector3Int.down;
             }
@@ -100,28 +109,28 @@ namespace BasDidon.Direction
             return vecs;
         }
 
-        public static List<Directions> GroupToSingleDirections(DirectionGroup directions)
+        public static List<Direction> GroupToSingleDirections(DirectionGroup directions)
         {
-            List<Directions> extracted = new();
+            List<Direction> extracted = new();
 
             if ((directions & DirectionGroup.Left) != 0)
             {
-                extracted.Add(Directions.Left);
+                extracted.Add(Direction.Left);
             }
 
             if ((directions & DirectionGroup.Right) != 0)
             {
-                extracted.Add(Directions.Right);
+                extracted.Add(Direction.Right);
             }
 
             if ((directions & DirectionGroup.Up) != 0)
             {
-                extracted.Add(Directions.Up);
+                extracted.Add(Direction.Up);
             }
 
             if ((directions & DirectionGroup.Down) != 0)
             {
-                extracted.Add(Directions.Down);
+                extracted.Add(Direction.Down);
             }
 
             return extracted;

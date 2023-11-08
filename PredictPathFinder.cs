@@ -9,7 +9,7 @@ namespace BasDidon.PathFinder
 
     public interface IPredictMoveable : IBoardObject
     {
-        public bool TryMove(Vector3Int from, Directions direction, out Vector3Int moveResult);
+        public bool TryMove(Vector3Int from, Direction direction, out Vector3Int moveResult);
     }
 
     public static class PredictPathFinder
@@ -21,13 +21,13 @@ namespace BasDidon.PathFinder
 
             List<DirectionsToCell> toSearch = new();
             List<DirectionsToCell> processed = new();
-            var extractedDir = Direction.GroupToSingleDirections(directions);
+            var extractedDir = GridDirection.GroupToSingleDirections(directions);
 
             foreach (var dir in extractedDir)
             {
                 if (moveableObject.TryMove(moveableObject.CellPos, dir, out Vector3Int moveResult))
                 {
-                    toSearch.Add(new(moveResult, new List<Directions>() { dir }));
+                    toSearch.Add(new(moveResult, new List<Direction>() { dir }));
                 }
             }
 
