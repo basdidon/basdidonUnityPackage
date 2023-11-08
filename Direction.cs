@@ -6,6 +6,7 @@ namespace BasDidon.Direction
 {
     public enum Directions
     {
+        None,
         Left,
         Right,
         Up,
