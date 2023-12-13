@@ -5,77 +5,62 @@ using System.Linq;
 
 namespace BasDidon.PathFinder.NodeBase
 {
-    public interface INodeRegistry
+    public interface INodeRegistry<T> where T:INode<T>
     {
-        public IReadOnlyList<INode> Nodes { get; }
-        public IReadOnlyList<INodeEdge> NodeEdges { get; }
+        public IReadOnlyList<INode<T>> Nodes { get; }
+        public IReadOnlyList<INodeEdge<T>> NodeEdges { get; }
     }
 
-    public interface INode
+    public interface INode<T> where T : INode<T>
     {
-        public INode[] NextNodes { get; }
+        public List<T> NextNodes { get; }
     }
 
-    public interface INodeEdge
+    public interface INodeEdge<T> where T:INode<T>
     {
-        public INode From { get; }
-        public INode To { get; }
+        public T From { get; }
+        public T To { get; }
         public bool IsOneWay { get; } 
         public bool IsActive { get; }
     }
 
-    public class NodePath
+    public class NodePath<T> where T:INode<T>
     {
-        List<INode> nodes;
-        public IReadOnlyList<INode> Nodes => nodes;
+        List<T> nodes;
+        public IReadOnlyList<T> Nodes => nodes;
 
-        public NodePath()
+        public NodePath(T StartNode)
         {
-            nodes = new();
+            nodes = new() { StartNode};
         }
 
-        public NodePath(INode StartNode) : base()
-        {
-            nodes.Add(StartNode);
-        }
-
-        public NodePath(IEnumerable<INode> nodes)
+        public NodePath(IEnumerable<T> nodes)
         {
             this.nodes = new(nodes);
         }
 
-        public NodePath(IEnumerable<INode> nodes, INode node)
+        public NodePath(IEnumerable<T> nodes, T node)
         {
             this.nodes = new(nodes) { node };
         }
 
-        public INode LastNode => nodes.Last();
+        public T Last => nodes.Last();  // Last node can't be null by designed
     }
 
-    public class PathFinder
+    public static class PathFinder
     {
-        public IEnumerable<NodePath> FindPathByMove(INode startNode,int move)
+        public static IEnumerable<NodePath<T>> FindPathByMove<T>(T startNode, int move) where T : INode<T>
         {
             if (move <= 0)
                 return null;
 
-            List<NodePath> nodePaths = new();
-            List<NodePath> toSearch = new();
+            var nodePaths = new List<NodePath<T>>().AsEnumerable();
 
-            for(int i = 0; i < move; i++)
+            for (int i = 0; i < move; i++)
             {
-                if(i == 0)
-                {
-                    foreach(var nextNode in startNode.NextNodes)
-                    {
-                        nodePaths.Add(new(nextNode));
-                    }
-                }
-                else
-                {
-                    toSearch = nodePaths.ToList();
-                    nodePaths = toSearch.SelectMany(p => p.LastNode.NextNodes.Select(n => new NodePath(p.Nodes, n))).ToList();                    
-                }
+                nodePaths = i == 0
+                    ? startNode.NextNodes.Select(nextNode => new NodePath<T>(nextNode))
+                    : nodePaths.SelectMany(p => p.Last.NextNodes.Select(n => new NodePath<T>(p.Nodes, n)));
             }
 
             return nodePaths;
