@@ -185,5 +185,11 @@ namespace BasDidon.Direction
 
             group = (DirectionGroup)updatedGroup;
         }
+
+        public static void AddDirectionVectorToDirectionGroup(ref DirectionGroup group, Vector3Int dirVec)
+        {
+            var dir = Vector3IntToDirection(dirVec);
+            AddDirectionToDirectionGroup(ref group, dir);
+        }
     }
 }
