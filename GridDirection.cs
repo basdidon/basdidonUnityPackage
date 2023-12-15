@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BasDidon.Direction
 {
-    public enum Direction
+    public enum Directions
     {
         None = 0,
         Left = 1,
@@ -14,7 +14,7 @@ namespace BasDidon.Direction
     }
 
     [Flags]
-    public enum DirectionGroup
+    public enum DirectionsGroup
     {
         None = 0,
         Left = 1,
@@ -23,7 +23,7 @@ namespace BasDidon.Direction
         Down = 8,
         Cardinal = 15, // Left,Right,Up,Down 
     };
-    
+    /*
     public static class GridDirection
     {
         public static Vector3Int[] CardinalVector => new Vector3Int[] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
@@ -176,13 +176,7 @@ namespace BasDidon.Direction
             // Perform a bitwise OR operation to add the direction to the group
             int updatedGroup = (byte)group | (byte)direction;
 
-            // Ensure the updated byte value represents a valid DirectionGroup
-            if (!Enum.IsDefined(typeof(DirectionGroup), (byte)updatedGroup))
-            {
-                // Handle invalid input or throw an exception
-                throw new ArgumentException($"Invalid direction or direction group. {(byte)updatedGroup}");
-            }
-
+            // cast value back to DirectionGroup and update group
             group = (DirectionGroup)updatedGroup;
         }
 
@@ -190,6 +184,122 @@ namespace BasDidon.Direction
         {
             var dir = Vector3IntToDirection(dirVec);
             AddDirectionToDirectionGroup(ref group, dir);
+        }
+    }*/
+
+    public class Direction
+    {
+        public Directions Value { get; private set; }
+
+        #region Constructor
+        public Direction(Directions directions)
+        {
+            Value = directions;
+        }
+
+        public Direction(Vector3Int directionVector)
+        {
+            if (directionVector == Vector3Int.zero)
+                Value = Directions.None;
+
+            if (directionVector.x * directionVector.y != 0)
+                Value = Directions.None;
+
+            if (directionVector.x < 0)
+            {
+                Value = Directions.Left;
+            }
+            else if (directionVector.x > 0)
+            {
+                Value = Directions.Right;
+            }
+            else if (directionVector.y < 0)
+            {
+                Value = Directions.Down;
+            }
+            else if (directionVector.y > 0)
+            {
+                Value = Directions.Up;
+            }
+        }
+        #endregion
+
+        public Vector3Int ToVector3Int()
+        {
+            if ((Value & Directions.Left) != 0)
+            {
+                return Vector3Int.left;
+            }
+            else if ((Value & Directions.Right) != 0)
+            {
+                return Vector3Int.right;
+            }
+            else if ((Value & Directions.Up) != 0)
+            {
+                return Vector3Int.up;
+            }
+            else if ((Value & Directions.Down) != 0)
+            {
+                return Vector3Int.down;
+            }
+
+            return Vector3Int.zero;
+        }
+
+        // (byte)
+        public static implicit operator Direction(byte code) => new((Directions) code);  // may be cause error
+        public static explicit operator byte(Direction direction) => (byte) direction.Value;
+        // (Directions)
+        public static implicit operator Direction(Directions directions) => new(directions);
+        public static explicit operator Directions(Direction direction) => direction.Value;
+        // (Vector3Int)
+        public static implicit operator Direction(Vector3Int vector) => new(vector);
+        public static explicit operator Vector3Int(Direction direction) => direction.ToVector3Int();
+    }
+
+    public class DirectionGroup
+    {
+        public DirectionsGroup Value { get; private set; }
+
+        public DirectionGroup(DirectionsGroup directionsGroup)
+        {
+            Value = directionsGroup;
+        }
+
+        public DirectionGroup(IEnumerable<Directions> directions)
+        {
+            byte flagValue = 0;
+
+            foreach(var dir in directions)
+            {
+                flagValue |= (byte)dir;
+            }
+
+            Value = (DirectionsGroup) flagValue;
+        }
+
+        public DirectionGroup(IEnumerable<Direction> directions)
+        {
+            byte flagValue = 0;
+
+            foreach(var dir in directions)
+            {
+                flagValue |= (byte) dir;
+            }
+
+            Value = (DirectionsGroup) flagValue;
+        }
+
+        public DirectionGroup(IEnumerable<Vector3Int> dirVecs)
+        {
+            byte flagValue = 0;
+
+            foreach (var dirVec in dirVecs)
+            {
+                flagValue |= (byte)(new Direction(dirVec));
+            }
+
+            Value = (DirectionsGroup)flagValue;
         }
     }
 }
