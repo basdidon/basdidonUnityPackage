@@ -177,10 +177,10 @@ namespace BasDidon.Direction
             int updatedGroup = (byte)group | (byte)direction;
 
             // Ensure the updated byte value represents a valid DirectionGroup
-            if (!Enum.IsDefined(typeof(DirectionGroup), updatedGroup))
+            if (!Enum.IsDefined(typeof(DirectionGroup), (byte)updatedGroup))
             {
                 // Handle invalid input or throw an exception
-                throw new ArgumentException("Invalid direction or direction group.");
+                throw new ArgumentException($"Invalid direction or direction group. {(byte)updatedGroup}");
             }
 
             group = (DirectionGroup)updatedGroup;
