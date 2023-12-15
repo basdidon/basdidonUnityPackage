@@ -247,7 +247,13 @@ namespace BasDidon.Direction
         }
 
         // (byte)
-        public static implicit operator Direction(byte code) => new((Directions) code);  // may be cause error
+        public static implicit operator Direction(byte code)
+        {
+            if (!Enum.IsDefined(typeof(Directions),code))
+                return Directions.None;
+            
+            return new((Directions)code);  // may be cause error
+        }
         public static explicit operator byte(Direction direction) => (byte) direction.Value;
         // (Directions)
         public static implicit operator Direction(Directions directions) => new(directions);
@@ -300,6 +306,17 @@ namespace BasDidon.Direction
             }
 
             Value = (DirectionsGroup)flagValue;
+        }
+
+        // Comparer
+        public static bool IsContains(Direction direction)
+        {
+            // if direction == Direction.None return false
+            if (((byte)direction & (byte)Value) != 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
