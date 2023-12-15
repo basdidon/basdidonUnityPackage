@@ -170,5 +170,20 @@ namespace BasDidon.Direction
 
             return false;
         }
+
+        public static void AddDirectionToDirectionGroup(ref DirectionGroup group, Direction direction)
+        {
+            // Perform a bitwise OR operation to add the direction to the group
+            int updatedGroup = (byte)group | (byte)direction;
+
+            // Ensure the updated byte value represents a valid DirectionGroup
+            if (!Enum.IsDefined(typeof(DirectionGroup), updatedGroup))
+            {
+                // Handle invalid input or throw an exception
+                throw new ArgumentException("Invalid direction or direction group.");
+            }
+
+            group = (DirectionGroup)updatedGroup;
+        }
     }
 }
