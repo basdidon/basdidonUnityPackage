@@ -88,6 +88,11 @@ namespace BasDidon.Direction
             this.directions = new(directions);
         }
 
+        public bool IsCellInDirectionGroup(Vector3Int pivot, Vector3Int cell)
+        {
+            return IsCellInDirectionGroup(pivot, cell, this);
+        }
+
         public static bool IsCellInDirectionGroup(Vector3Int pivot, Vector3Int cell, DirectionGroup dirs)
         {
            return dirs.Any(dir => dir.IsCellInDirection(pivot, cell));
