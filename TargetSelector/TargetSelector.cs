@@ -6,9 +6,8 @@ using System.Linq;
 
 namespace BasDidon.TargetSelector
 {
-    public class TargetSelector<T>
+    public class TargetSelector<T> // it look like stateMachine
     {
-        MonoBehaviour Invoker { get; }
         public bool AllowToCancle { get; set; }
 
         IEnumerable<T> Targets { get; }
@@ -34,9 +33,6 @@ namespace BasDidon.TargetSelector
         public enum SelectorPhase { created, started, performed, cancled }
         public SelectorPhase Phase { get; private set; }
 
-        // Routine
-        public Coroutine SelectTargetRoutine { get; set; }
-
         // Events
         public event Action OnSelectionStart;   // when start select
         public event Action<T> OnFocusChange;   // when player focus on any target
@@ -44,9 +40,8 @@ namespace BasDidon.TargetSelector
         public event Action OnCancle;           // when player cancle to select
         public event Action OnSelectionEnd;     // when selection end
 
-        public TargetSelector(MonoBehaviour invoker, IEnumerable<T> targets, Func<T, bool> predicate,Func<T> updater, bool allowToCancle)
+        public TargetSelector(IEnumerable<T> targets, Func<T, bool> predicate,Func<T> updater, bool allowToCancle)
         {
-            Invoker = invoker;
             Targets = targets;
             Predicate = predicate;
             Updater = updater;
@@ -63,14 +58,22 @@ namespace BasDidon.TargetSelector
             Phase = SelectorPhase.started;
             OnSelectionStart?.Invoke();
 
-            if (Selectable.Any())
-            {
-                SelectTargetRoutine = Invoker.StartCoroutine(SelectionAction());
-            }
-            else
+            if (!Selectable.Any())
             {
                 // can't select anything.
                 EndSelection();
+            }
+        }
+
+        public void Update()
+        {
+            if (Phase == SelectorPhase.started)
+            {
+                focusTarget = Updater();
+            }
+            else
+            {
+                Debug.LogWarning($"You try to update during {Phase}");
             }
         }
 
@@ -83,8 +86,6 @@ namespace BasDidon.TargetSelector
             Phase = SelectorPhase.cancled;
             OnCancle?.Invoke();
 
-            Invoker.StopCoroutine(SelectTargetRoutine);
-
             EndSelection();
         }
 
@@ -95,8 +96,6 @@ namespace BasDidon.TargetSelector
             {
                 Phase = SelectorPhase.performed;
                 OnSelect?.Invoke(FocusTarget);
-
-                Invoker.StopCoroutine(SelectTargetRoutine);
 
                 EndSelection();
             }
@@ -109,14 +108,6 @@ namespace BasDidon.TargetSelector
         void EndSelection()
         {
             OnSelectionEnd?.Invoke();
-        }
-
-        IEnumerator SelectionAction()
-        {
-            yield return new WaitUntil(()=> {
-                FocusTarget = Updater();
-                return false;
-            });
         }
     }
 }
