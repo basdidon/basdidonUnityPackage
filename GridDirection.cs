@@ -41,16 +41,30 @@ namespace BasDidon.Direction
             // Calculate the direction vector from pivot to cell
             var direction = cell - pivot;
 
-            // Calculate the sum of direction components (x, y, z)
-            var sumOfComponents = direction.x + direction.y + direction.z;
+            if (!IsOneAxisVector(direction))
+                return false;
 
             // Check if DirectionVector is a unit vector in any direction
             // (assuming DirectionVector is a known variable containing one axis vector)
             var scaledDirection = Vector3Int.Scale(direction, DirectionVector);
             var scaledSumOfComponents = scaledDirection.x + scaledDirection.y + scaledDirection.z;
 
-            // Check if the scaled sum of direction components is positive and the absolute sum equals the scaled sum
-            return scaledSumOfComponents > 0 && MathF.Abs(sumOfComponents) == scaledSumOfComponents;
+            // Check if the scaled sum of direction components is positive
+            return scaledSumOfComponents > 0;
+        }
+
+        bool IsOneAxisVector(Vector3 vector)
+        {
+            int nonZeroCount = 0;
+
+            if (vector.x != 0)
+                nonZeroCount++;
+            if (vector.y != 0)
+                nonZeroCount++;
+            if (vector.z != 0)
+                nonZeroCount++;
+
+            return nonZeroCount == 1;
         }
 
         public override bool Equals(object obj)
