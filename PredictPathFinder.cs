@@ -14,14 +14,16 @@ namespace BasDidon.PathFinder
 
     public static class PredictPathFinder
     {
-        public static List<DirectionsToCell> PredictMoves(IPredictMoveable moveableObject, int moveCount, DirectionGroup directions = DirectionGroup.Cardinal)
+        public static List<DirectionsToCell> PredictMoves(IPredictMoveable moveableObject, int moveCount, DirectionGroup directions = null)
         {
             if (moveCount < 0)
                 return null;
 
+            directions ??= DirectionGroup.CardinalDirection;
+
             List<DirectionsToCell> toSearch = new();
             List<DirectionsToCell> processed = new();
-            var extractedDir = GridDirection.GroupToSingleDirections(directions);
+            var extractedDir = new DirectionGroup(directions);
 
             foreach (var dir in extractedDir)
             {

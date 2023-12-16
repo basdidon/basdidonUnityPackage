@@ -30,13 +30,13 @@ namespace BasDidon.PathFinder
         public List<Vector3Int> ToWayPoint()
         {
             List<Vector3Int> WayPoints = new();
-            Direction currentDir = Direction.None;
+            Direction currentDir = null;
 
             WayPoints.Add(this[0]);
 
             for (int i = 0; i < Count - 1; i++)
             {
-                var newDir = GridDirection.Vector3IntToDirection(this[i + 1] - this[i]);
+                Direction.TryGetDirectionByDirectionVector(this[i + 1] - this[i],out Direction newDir);//GridDirection.Vector3IntToDirection(this[i + 1] - this[i]);
 
                 if (newDir == currentDir)
                 {
@@ -144,7 +144,7 @@ namespace BasDidon.PathFinder
                 processed.Add(currentNode);
                 toSearch.Remove(currentNode);
 
-                foreach (var direction in GridDirection.DirectionGroupToVector3Ints(dirs))
+                foreach (var direction in dirs.DirectionVectors)
                 {
                     var nextPos = currentNode.CellPosition + direction;
                     if (predicate(nextPos))
