@@ -13,7 +13,7 @@ namespace BasDidon.TargetSelector
 
         IEnumerable<T> Targets { get; }
         Func<T, bool> Predicate { get; }
-        Func<Coroutine> Selector { get; }
+        Func<T> Updater { get; }
         IEnumerable<T> Selectable { get; }
 
         T focusTarget;
@@ -44,11 +44,13 @@ namespace BasDidon.TargetSelector
         public event Action OnCancle;           // when player cancle to select
         public event Action OnSelectionEnd;     // when selection end
 
-        public TargetSelector(Func<Coroutine> selector, IEnumerable<T> targets, Func<T, bool> predicate, bool allowToCancle)
+        public TargetSelector(MonoBehaviour invoker, IEnumerable<T> targets, Func<T, bool> predicate,Func<T> updater, bool allowToCancle)
         {
-            Selector = selector;
+            Invoker = invoker;
             Targets = targets;
             Predicate = predicate;
+            Updater = updater;
+
             Phase = SelectorPhase.created;
 
             AllowToCancle = allowToCancle;
@@ -63,7 +65,7 @@ namespace BasDidon.TargetSelector
 
             if (Selectable.Any())
             {
-                SelectTargetRoutine = Selector();
+                SelectTargetRoutine = Invoker.StartCoroutine(SelectionAction());
             }
             else
             {
@@ -89,13 +91,32 @@ namespace BasDidon.TargetSelector
         // let user select
         public void Select()
         {
-            Phase = SelectorPhase.performed;
-            OnSelect?.Invoke(FocusTarget);
+            if (Selectable.Contains(FocusTarget))
+            {
+                Phase = SelectorPhase.performed;
+                OnSelect?.Invoke(FocusTarget);
+
+                Invoker.StopCoroutine(SelectTargetRoutine);
+
+                EndSelection();
+            }
+            else
+            {
+                Debug.Log("not in selectable");
+            }
         }
 
         void EndSelection()
         {
             OnSelectionEnd?.Invoke();
+        }
+
+        IEnumerator SelectionAction()
+        {
+            yield return new WaitUntil(()=> {
+                FocusTarget = Updater();
+                return false;
+            });
         }
     }
 }
