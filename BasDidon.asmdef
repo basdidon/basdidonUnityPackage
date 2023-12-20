@@ -1,7 +1,10 @@
 {
     "name": "BasDidon",
     "rootNamespace": "BasDidon",
-    "references": [],
+    "references": [
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
