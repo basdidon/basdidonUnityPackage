@@ -1,9 +1,7 @@
 {
     "name": "Basdidon",
     "rootNamespace": "Basdidon",
-    "references": [
-        ""
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
